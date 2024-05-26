@@ -1,17 +1,17 @@
-tool
-extends MeshInstance
+@tool
+extends MeshInstance3D
 class_name PlanetMeshFace
 
-export var normal : Vector3
+@export var normal : Vector3
 
 func regenerate_mesh(planet_data : PlanetData):
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	
-	var vertex_array := PoolVector3Array()
-	var uv_array := PoolVector2Array()
-	var normal_array := PoolVector3Array()
-	var index_array := PoolIntArray()
+	var vertex_array := PackedVector3Array()
+	var uv_array := PackedVector2Array()
+	var normal_array := PackedVector3Array()
+	var index_array := PackedInt32Array()
 	
 	var resolution := planet_data.resolution
 	
@@ -80,7 +80,7 @@ func _update_mesh(arrays : Array, planet_data : PlanetData):
 	_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	self.mesh = _mesh
 	
-	material_override.set_shader_param("min_height", planet_data.min_height)
-	material_override.set_shader_param("max_height", planet_data.max_height)
-	material_override.set_shader_param("height_color", planet_data.update_biome_texture())
+	material_override.set_shader_parameter("min_height", planet_data.min_height)
+	material_override.set_shader_parameter("max_height", planet_data.max_height)
+	material_override.set_shader_parameter("height_color", planet_data.update_biome_texture())
 	

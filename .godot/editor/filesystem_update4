@@ -1,0 +1,6 @@
+res://default_env.tres
+res://Main.tscn
+res://PlanetMaterial.tres
+res://PlanetData.gd
+res://Planet.tscn
+res://PlanetNoise.gd

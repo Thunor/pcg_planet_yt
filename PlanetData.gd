@@ -1,16 +1,16 @@
-tool
+@tool
 extends Resource
 
 class_name PlanetData
 
-export var radius := 1.0 setget set_radius
-export var resolution := 10 setget set_resolution
-export(Array, Resource) var planet_noise setget set_planet_noise
-export(Array, Resource) var biomes setget set_biomes
-export var biome_noise : OpenSimplexNoise = OpenSimplexNoise.new() setget set_biome_noise
-export var biome_amplitude : float setget set_biome_amplitude
-export var biome_offset : float setget set_biome_offset
-export(float, 0.0, 1.0) var biome_blend setget set_biome_blend
+@export var radius := 1.0: set = set_radius
+@export var resolution := 10: set = set_resolution
+@export var planet_noise : Array[PlanetNoise]: set = set_planet_noise
+@export var biomes : Array[PlanetBiome]: set = set_biomes
+@export var biome_noise : FastNoiseLite = FastNoiseLite.new(): set = set_biome_noise
+@export var biome_amplitude : float: set = set_biome_amplitude
+@export var biome_offset : float: set = set_biome_offset
+@export var biome_blend : float: set = set_biome_blend
 
 var min_height := 99999.0
 var max_height := 0.0
@@ -22,8 +22,8 @@ func set_biome_blend(val):
 func set_biome_noise(val):
 	biome_noise = val
 	emit_signal("changed")
-	if not biome_noise.is_connected("changed", self, "on_data_changed"):
-		biome_noise.connect("changed", self, "on_data_changed")
+	if not biome_noise.is_connected("changed", Callable(self, "on_data_changed")):
+		biome_noise.connect("changed", Callable(self, "on_data_changed"))
 	
 func set_biome_amplitude(val):
 	biome_amplitude = val
@@ -38,8 +38,8 @@ func set_biomes(val):
 	for i in range(biomes.size()):
 		if biomes[i] == null:
 			biomes[i] = PlanetBiome.new()
-		if not biomes[i].is_connected("changed", self, "on_data_changed"):
-			biomes[i].connect("changed", self, "on_data_changed")
+		if not biomes[i].is_connected("changed", Callable(self, "on_data_changed")):
+			biomes[i].connect("changed", Callable(self, "on_data_changed"))
 	emit_signal("changed")
 
 func set_radius(val):
@@ -54,8 +54,8 @@ func set_planet_noise(val):
 	planet_noise = val
 	emit_signal("changed")
 	for n in planet_noise:
-		if n != null and not n.is_connected("changed", self, "on_data_changed"):
-			n.connect("changed", self, "on_data_changed")
+		if n != null and not n.is_connected("changed", Callable(self, "on_data_changed")):
+			n.connect("changed", Callable(self, "on_data_changed"))
 
 func on_data_changed():
 	emit_signal("changed")
@@ -66,13 +66,13 @@ func update_biome_texture() -> ImageTexture:
 	
 	var h : int = biomes.size()
 	if h > 0:
-		var data : PoolByteArray
+		var data : PackedByteArray
 		var w : int = biomes[0].gradient.width
 		for b in biomes:
 			data.append_array(b.gradient.get_data().get_data())
 		dyn_image.create_from_data(w, h, false, Image.FORMAT_RGBA8, data)
 		
-		image_texture.create_from_image(dyn_image, 4);
+		image_texture.create_from_image(dyn_image) #,4;
 		image_texture.resource_name = "biome texture"
 		
 	return image_texture
